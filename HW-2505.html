@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+      integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
+      crossorigin="anonymous"
+    />
+    <!-- Font Awesome -->
+    <!-- <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet"> -->
+
+
+    <!--
+      PAIR PROGRAMMING EXERCISE.
+      1 DRIVER, 1 NAVIGATOR.
+      1 Exercise each. Use GitHub to share the code.
+      Less exercise, more complicated. 
+      Ex1) Get and display, using an asynchronous pattern, the users from: https://jsonplaceholder.typicode.com/users 
+      Ex2) Create a dropdown (<select>) that allows the user to select between name, username and email. 
+           Create then a filter. When the user types in something, you should filter the user based on the input and on the value of the select.
+           Es.: select on NAME. Filter input = Glenna, only user id number 9 should remain
+      Ex3) Create a function that, from the list of users, extracts only the names
+      Ex4) Create a function that, from the list of users, creates an array of addresses as string and not as an object. Like:
+              {
+              "street": "Victor Plains",
+              "suite": "Suite 879",
+              "city": "Wisokyburgh",
+              "zipcode": "90566-7771",
+              "geo": {
+                "lat": "-43.9509",
+                "lng": "-34.4618"
+              }
+          Should become Victor Plains, Suite 879, Wisokyburgh (90566-7771)
+      
+      Ex5) Add a button that sorts the list by name ascending / descending (ONE button)
+      Ex6) Add a link on each user, when clicked it must go to a detail page, where to user information are presented (from the API)
+      EXTRA)
+      Visualize on a Google Map plugin all the users (using lat & lng)
+    -->
+    <style>
+      .userCard {
+        height: 400px;
+      }
+
+    </style>
+  </head>
+  <body>
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://use.fontawesome.com/d0e67a28fc.js"></script>
+    <script>
+
+      // create dropdown
+
+      let rowHeader = document.createElement("div")
+
+      rowHeader.setAttribute("class", "row px-auto d-flex my-2")
+
+      rowHeader.innerHTML = `<div class="col-12 mx-auto d-flex justify-content-center align-items-center">
+      <form>
+        <label for="searchInput">Search Data:</label>
+        <select name="searchInput" id="searchInput" class="my-1">
+          <option value="name">Name</option>
+          <option value="username">Username</option>
+          <option value="email">Email</option>
+        </select>
+
+        <div class="input-group my-1">
+        <div class="form-outline">
+          <input type="search" id="form1" class="form-control" placeholder="Search selected input.." onChange="filterCards()"/>
+        </div>
+        <button type="button" class="btn btn-primary" id="searchButton" onClick="addListforSearchValue()">
+          <i class="fa fa-search"></i>
+        </button>
+      </div>
+      </form>`
+
+      // append dropdown to body
+
+      document.body.appendChild(rowHeader)
+
+
+let myData
+
+let mainDiv = document.createElement("div")
+
+mainDiv.setAttribute("id", "main")
+
+// let fetchingUsers = () => {
+  fetch(`https://jsonplaceholder.typicode.com/users`)
+    .then((res) => res.json())
+    .then((data) => {
+        console.log(data);
+      myData = data;
+      console.log(myData)
+
+const cardDeck = document.createElement("div")
+
+cardDeck.setAttribute("class", "container-fluid")
+
+// create cards for each user in groups of three
+
+for(x=0; x<myData.length; x++) {
+  
+  const cardRow = document.createElement("div")
+
+  cardRow.setAttribute("class", "row")
+
+  console.log(x)
+
+  if (x<myData.length){
+  
+  let user1 = myData[x] 
+
+  let user1Address = user1.address
+
+  let user1Company = user1.company
+
+  let newCard1 = document.createElement("div")
+
+  newCard1.setAttribute("class", "col-4")
+
+  let cardUser1 = `<div class="card my-2 userCard mx-auto">
+    <div class="card-body">
+    <h4 class="card-title text-center name">${user1.name}</h4>
+    <p class="card-text text-center username">${user1.username}</p>
+    <p class="card-text email">Email: ${user1.email}</p>
+    <br>
+    <hr>
+    <br>
+    <p class="card-text address">Address: ${user1Address.suite}  ${user1Address.street},
+      ${user1Address.city}, ${user1Address.city}</p>
+    <p class="card-text companyname">Company Name: ${user1Company.name}</p>
+    <a href="HW-2505-Detail.html?userID=${user1.id}"><button class="btn-rounded btn-primary">Details</button></a>
+  </div>`
+
+  newCard1.innerHTML = cardUser1
+
+cardRow.appendChild(newCard1)
+  }
+
+x++
+
+
+if (x<myData.length){
+
+console.log(x)
+
+let user2 = myData[x] 
+
+let user2Address = user2.address
+
+let user2Company = user2.company
+
+let newCard2 = document.createElement("div")
+
+  newCard2.setAttribute("class", "col-4")
+
+  let cardUser2 = `<div class="card my-2 userCard mx-auto">
+    <div class="card-body">
+    <h4 class="card-title text-center name">${user2.name}</h4>
+    <p class="card-text text-center username">${user2.username}</p>
+    <p class="card-text email">Email: ${user2.email}</p>
+    <br>
+    <hr>
+    <br>
+    <p class="card-text address">Address: ${user2Address.suite}  ${user2Address.street},
+      ${user2Address.city}, ${user2Address.city}</p>
+    <p class="card-text companyname">Company Name: ${user2Company.name}</p>
+    <a href="HW-2505-Detail.html?userID=${user2.id}"><button class="btn-rounded btn-primary">Details</button></a>
+  </div>`
+
+  newCard2.innerHTML = cardUser2
+
+cardRow.appendChild(newCard2)
+
+}
+
+x++
+
+console.log(x)
+
+
+if (x<myData.length){
+
+let user3 = myData[x] 
+
+let user3Address = user3.address
+
+let user3Company = user3.company
+
+let newCard3 = document.createElement("div")
+
+  newCard3.setAttribute("class", "col-4")
+
+  let cardUser3 = `<div class="card my-2 userCard mx-auto">
+    <div class="card-body">
+    <h4 class="card-title text-center name">${user3.name}</h4>
+    <p class="card-text text-center username">${user3.username}</p>
+    <p class="card-text email">Email: ${user3.email}</p>
+    <br>
+    <hr>
+    <br>
+    <p class="card-text address">Address: ${user3Address.suite}  ${user3Address.street},
+      ${user3Address.city}, ${user3Address.city}
+      (${user3Address.zipcode})</p>
+    <p class="card-text companyname">Company Name: ${user3Company.name}</p>
+    <a href="HW-2505-Detail.html?userID=${user3.id}"><button class="btn-rounded btn-primary">Details</button></a>
+  </div>`
+
+  newCard3.innerHTML = cardUser3
+
+cardRow.appendChild(newCard3)
+}
+
+cardDeck.appendChild(cardRow)
+
+}
+
+mainDiv.appendChild(cardDeck)
+
+document.body.appendChild(mainDiv)
+
+
+        })
+    .catch(err => {
+          console.error(err);
+      });
+
+
+      function filterCards (e) {
+        let searchQuery = document.getElementById("searchInput")
+
+        let searchQueryValue = searchQuery.value
+
+        console.log(searchQueryValue)
+
+        let input = document.getElementById("form1")
+
+        let filter = input.value.toUpperCase()
+
+        console.log(filter)
+
+        let cards = document.querySelectorAll(".card")
+
+        cards.forEach(card => {
+
+          console.log(searchQueryValue)
+          let key = card.getElementsByClassName(`${searchQueryValue}`)
+
+          console.log(card)
+
+          console.log(key)
+
+          let keyValue = key[0].innerHTML
+
+          console.log(keyValue)
+
+          if (keyValue.toUpperCase().indexOf(filter) > -1) {
+            card.style.display = "flex";
+          } else {
+            card.style.display = "none";
+          }
+        })
+
+
+      }
+
+      function sortList() {
+        let listItems = document.querySelectorAll(".list-group-item")
+
+        let listArray = []
+
+        listItems.forEach(item => {
+          listArray.push(item.innerHTML)
+        })
+
+        console.log(listArray)
+
+        let sortedArray = listArray.sort()
+
+        for(x=0; x<sortedArray.length; x++){
+          listItems[x].innerHTML = sortedArray[x]
+        }
+
+      }
+
+      function removeList () {
+        let list = document.querySelectorAll(".listRow")
+        console.log(list)
+        list.forEach(listItem => {
+          listItem.remove()
+        })
+
+      }
+
+      function showDetails() {
+        location.href = "/HW-2505-Detail.html";
+      }
+
+      let searchBtn = document.getElementById("searchButton")
+      searchBtn.addEventListener("click", removeList())
+
+      function addListforSearchValue () {
+
+        let listRow = document.createElement("div")
+        listRow.setAttribute("class", "row my-3 d-flex justify-content-center mx-5 listRow")
+
+        let searchOption = document.getElementById("searchInput")
+
+        let cards = document.querySelectorAll(".card")
+
+        let columnDiv = document.createElement("div")
+          columnDiv.setAttribute("class", "col-12 mx-auto")
+
+          let listElement = document.createElement("ul")
+          listElement.setAttribute("class", "list-group")
+
+          console.log(listElement)
+
+          let heading = document.createElement("h2")
+
+        heading.innerHTML = searchOption.value.toUpperCase()
+
+        columnDiv.appendChild(heading)
+
+        let button = document.createElement("button")
+
+        button.innerHTML = "Sort"
+
+        button.setAttribute("class", "py-2 px-4 btn-success btn-rounded")
+
+        button.setAttribute("onClick", "sortList()")
+
+        columnDiv.appendChild(button)
+
+          cards.forEach(card => {
+            if (card.style.display == "flex") {
+
+              let cardOption = card.getElementsByClassName(`${searchOption.value}`)
+
+              console.log(cardOption)
+
+              let optionValue = cardOption[0].innerHTML
+
+              let listItem = document.createElement("li")
+              listItem.setAttribute("class", "list-group-item")
+
+              console.log(listItem)
+
+              listItem.innerHTML = optionValue
+
+              listElement.appendChild(listItem)
+
+              
+            }
+
+            columnDiv.appendChild(listElement)
+
+          })
+
+      listRow.appendChild(columnDiv)
+          document.body.appendChild(listRow)
+          
+      }
+
+      // function printList 
+
+
+
+
+
+
+    </script>
+  </body>
+</html>
